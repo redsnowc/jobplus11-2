@@ -1,6 +1,11 @@
 '''
-
+User 普通用户和管理员的数据表
+Company 公司用户的数据表
+Resume 简历数据表
+CompanyInfo 公司简介数据表
+Job 职位数据表
 '''
+
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 

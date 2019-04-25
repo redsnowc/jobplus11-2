@@ -1,3 +1,7 @@
+'''
+首页蓝图
+'''
+
 from flask import Blueprint, render_template
 
 

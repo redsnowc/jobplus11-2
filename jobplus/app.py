@@ -1,3 +1,7 @@
+'''
+注册蓝图、初始化数据库、定义 create_app 函数
+'''
+
 from flask import Flask
 from flask_migrate import Migrate
 from jobplus.config import configs
