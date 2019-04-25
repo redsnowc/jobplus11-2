@@ -1,0 +1,17 @@
+# compiled file
+__pycache__/
+
+# virtualenv 
+venv/
+.venv
+ENV/
+
+# vscode and pycharm
+.vscode/
+.idea
+
+# migrate file
+migrations/
+
+# vim file
+.swp
