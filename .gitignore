@@ -14,4 +14,4 @@ ENV/
 migrations/
 
 # vim file
-.swp
+*.swp
