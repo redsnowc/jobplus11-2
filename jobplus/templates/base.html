@@ -50,30 +50,35 @@
                    href="{{ url_for('home.login') }}">
                    登录</a></li>
           {% elif current_user.is_authenticated and current_user.is_company %}
-            <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown"
-               role="button" aria-haspopup="true" 
-               aria-expanded="false"><span id="username">
-               {{ current_user.company_name }}</span><span 
-               class="caret"></span></a>
-              <ul class="dropdown-menu">
-                <li><a href="#">公司主页</a></li>
-                <li role="separator" class="divider"></li>
-                <li><a href="#">退出登录</a></li>
-              </ul>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" 
+                 id="navbarDropdown" role="button" data-toggle="dropdown"
+                 aria-haspopup="true"
+                 aria-expanded="false">
+                 {{ current_user.username }}
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <a class="dropdown-item" href="#">公司首页</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="{{ url_for('home.logout') }}">
+                   退出登录</a>
+              </div>
              </li>
            {% else %}
-            <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown"
-               role="button" aria-haspopup="true" 
-               aria-expanded="false"><span id="username">
-               {{ current_user.username }}</span><span 
-               class="caret"></span></a>
-              <ul class="dropdown-menu">
-                <li><a href="#">个人主页</a></li>
-                <li role="separator" class="divider"></li>
-                <li><a href="#">退出登录</a></li>
-              </ul>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" 
+                 id="navbarDropdown" role="button" data-toggle="dropdown"
+                 aria-haspopup="true"
+                 aria-expanded="false">
+                 {{ current_user.username }}
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <a class="dropdown-item" href="{{ url_for('user.index') }}">
+                   个人首页</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="{{ url_for('home.logout') }}">
+                   退出登录</a>
+              </div>
              </li>
            {% endif %}
         </ul>
@@ -85,10 +90,7 @@
     {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
     {% for categroy, message in messages %}
-    <div class="alert alert-{{ category }} alert-dismissible" role="alter">
-      <button type="button" class="close" data-dismiss="alert" 
-              aria-label="Close"><span aria-hidden="true">
-              &times;</span></button>
+    <div class="alert alert-{{ categroy }}" role="alert">
       {{ message }}
     </div>
     {% endfor %}

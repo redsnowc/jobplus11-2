@@ -6,8 +6,8 @@ from flask import Flask
 from flask_migrate import Migrate
 from flask_login import LoginManager
 from jobplus.config import configs
-from jobplus.blueprints import home_bp
-from jobplus.models import db, User, Company
+from jobplus.blueprints import home_bp, user_bp
+from jobplus.models import db, User
 
 
 def create_app(config):
@@ -20,6 +20,7 @@ def create_app(config):
 
 def register_blueprints(app):
     app.register_blueprint(home_bp)
+    app.register_blueprint(user_bp)
 
 
 def register_extensions(app):
@@ -30,12 +31,7 @@ def register_extensions(app):
 
     @login_manager.user_loader
     def user_loader(id):
-        company = Company.query.get(id)
-        user = User.query.get(id)
-        if user:
-            return user
-        elif company:
-            return company
+        return User.query.get(id)
 
     login_manager.login_view = 'front.login'
 

@@ -23,6 +23,7 @@ class Base(db.Model):
 
 class User(Base, UserMixin):
     ROLE_USER = 10
+    ROLE_COMPANY = 20
     ROLE_ADMIN = 30
 
     id = db.Column(db.Integer, primary_key=True)
@@ -32,7 +33,9 @@ class User(Base, UserMixin):
             db.String(64), unique=True, index=True, nullable=False)
     _password = db.Column('password', db.String(256), nullable=False)
     role = db.Column(db.SmallInteger, default=ROLE_USER)
-    user_resume = db.relationship('Resume')
+    user_info = db.relationship('UserInfo', uselist=False)
+    publish_job = db.relationship('Job')
+    company_info = db.relationship('CompanyInfo')
 
     @property
     def password(self):
@@ -49,41 +52,17 @@ class User(Base, UserMixin):
     def is_admin(self):
         return self.role == self.ROLE_ADMIN
 
-
-class Company(Base, UserMixin):
-    ROLE_COMPANY = 20
-    
-    id = db.Column(db.Integer, primary_key=True)
-    company_name = db.Column(
-            db.String(64), unique=True, index=True, nullable=False)
-    email = db.Column(
-            db.String(64), unique=True, index=True, nullable=False)
-    _password = db.Column('password', db.String(256), nullable=False)
-    role = db.Column(db.SmallInteger, default=ROLE_COMPANY)
-    publish_job = db.relationship('Job')
-    company_info = db.relationship('CompanyInfo')
-
-    @property
-    def password(self):
-        return self._password
-
-    @password.setter
-    def password(self, orig_password):
-        self._password = generate_password_hash(orig_password)
-
-    def check_password(self, password):
-        self._password = generate_password_hash(self._password, password)
-
     @property
     def is_company(self):
         return self.role == self.ROLE_COMPANY
 
-class Resume(Base):
+
+class UserInfo(Base):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(32), index=True, nullable=False)
-    email = db.Column(db.String(64), nullable=False)
     phone_number = db.Column(db.Integer, nullable=False)
-    body = db.Column(db.Text)
+    experience = db.Column(db.Integer, default=0)
+    resume = db.Column(db.String(256))
     user_id = db.Column(
             db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'))
     user = db.relationship('User', uselist=False)
@@ -95,8 +74,8 @@ class CompanyInfo(Base):
     field = db.Column(db.String(64))
     intro = db.Column(db.Text)
     company_id = db.Column(
-            db.Integer, db.ForeignKey('company.id', ondelete='CASCADE'))
-    company = db.relationship('Company', uselist=False)
+            db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'))
+    company = db.relationship('User', uselist=False)
             
 
 class Job(Base):
@@ -110,6 +89,6 @@ class Job(Base):
     tags = db.Column(db.String(128))
     intro = db.Column(db.Text)
     company_id = db.Column(
-            db.Integer, db.ForeignKey('company.id', ondelete='CASCADE'))
-    company = db.relationship('Company', uselist=False)
+            db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'))
+    company = db.relationship('User', uselist=False)
 

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}UserInfo{% endblock %}
+
+{% block body%}
+<div class="card text-center">
+  <div class="card-header">
+    个人信息一览
+  </div>
+  <div class="card-body">
+    <h5 class="card-title">{{ user.user_info.name }}</h5>
+    <p class="card-text">邮箱：{{ user.email }}</p>
+    <p class="card-text">手机号：{{ user.user_info.phone_number }}</p> 
+    <p class="card-text">工作年限：{{ user.user_info.experience }}</p>
+    <p class="card-text">简历地址：{{ user.user_info.resume }}</p>
+    <a href="{{ url_for('user.edit_userinfo') }}" class="btn btn-primary">编辑个人信息</a>
+    <a href="{{ url_for('user.edit_user') }}" class="btn btn-primary">编辑帐户信息</a>
+  </div>
+</div>
+{% endblock %}

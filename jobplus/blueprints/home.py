@@ -4,7 +4,7 @@
 
 from flask import Blueprint, render_template, flash, redirect, url_for
 from flask_login import login_user, logout_user, login_required
-from jobplus.models import User, Company
+from jobplus.models import User
 from jobplus.forms import LoginForm, UserRegisterForm, CompanyRegisterForm
 
 home_bp = Blueprint('home', __name__)
@@ -19,15 +19,16 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
-        company = Company.query.filter_by(email=form.email.data).first()
-        if user:
-            login_user(user, form.remember_me.data)
-            return redirect(url_for('.index'))
-        elif company:
-            login_user(company, form.remember_me.data)
-            return redirect(url_for('.index'))
+        login_user(user, form.remember_me.data)
+        return redirect(url_for('.index'))
     return render_template('login.html', form=form)
 
+@home_bp.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    flash('您已退出登录', 'success')
+    return redirect(url_for('.index'))
 
 @home_bp.route('/user-register', methods=['GET', 'POST'])
 def user_register():
