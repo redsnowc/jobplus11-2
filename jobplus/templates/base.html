@@ -31,17 +31,70 @@
             <a class="nav-link" href="#">公司<span 
                                 class="sr-only">(current)</span></a>
           </li>
+          {% if current_user.is_authenticated and current_user.is_admin %}
+          <li class="nav-item active">
+            <a class="nav-link" href="#">控制台<span 
+                                class="sr-only">(current)</span></a>
+          </li>
+          {% endif %}
         </ul>
         <ul class="nav navbar-nav navbar-right">
-          <li><a class="nav-link" href="#">个人用户注册</a></li>
-          <li><a class="nav-link" href="#">公司用户注册</a></li>
-          <li><a class="nav-link" href="#">登录</a></li>
+          {% if not current_user.is_authenticated %}
+            <li><a class="nav-link" 
+                   href="{{ url_for('home.user_register') }}">
+                   个人用户注册</a></li>
+               <li><a class="nav-link" 
+                   href="{{ url_for('home.company_register') }}">
+                   企业用户注册</a></li>
+          <li><a class="nav-link" 
+                   href="{{ url_for('home.login') }}">
+                   登录</a></li>
+          {% elif current_user.is_authenticated and current_user.is_company %}
+            <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown"
+               role="button" aria-haspopup="true" 
+               aria-expanded="false"><span id="username">
+               {{ current_user.company_name }}</span><span 
+               class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href="#">公司主页</a></li>
+                <li role="separator" class="divider"></li>
+                <li><a href="#">退出登录</a></li>
+              </ul>
+             </li>
+           {% else %}
+            <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown"
+               role="button" aria-haspopup="true" 
+               aria-expanded="false"><span id="username">
+               {{ current_user.username }}</span><span 
+               class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href="#">个人主页</a></li>
+                <li role="separator" class="divider"></li>
+                <li><a href="#">退出登录</a></li>
+              </ul>
+             </li>
+           {% endif %}
         </ul>
       </div>
     </div>
   </nav>
 
   <div class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for categroy, message in messages %}
+    <div class="alert alert-{{ category }} alert-dismissible" role="alter">
+      <button type="button" class="close" data-dismiss="alert" 
+              aria-label="Close"><span aria-hidden="true">
+              &times;</span></button>
+      {{ message }}
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+    <br>
     {% block body %}{% endblock %}
     {% block fotter %}{% endblock %}
   </div>

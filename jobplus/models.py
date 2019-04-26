@@ -8,6 +8,8 @@ Job 职位数据表
 
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import UserMixin
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 db = SQLAlchemy()
@@ -19,7 +21,7 @@ class Base(db.Model):
             db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 
-class User(Base):
+class User(Base, UserMixin):
     ROLE_USER = 10
     ROLE_ADMIN = 30
 
@@ -32,8 +34,23 @@ class User(Base):
     role = db.Column(db.SmallInteger, default=ROLE_USER)
     user_resume = db.relationship('Resume')
 
+    @property
+    def password(self):
+        return self._password
 
-class Company(Base):
+    @password.setter
+    def password(self, orig_password):
+        self._password = generate_password_hash(orig_password)
+
+    def check_password(self, password):
+        self._password = generate_password_hash(self._password, password)
+
+    @property
+    def is_admin(self):
+        return self.role == self.ROLE_ADMIN
+
+
+class Company(Base, UserMixin):
     ROLE_COMPANY = 20
     
     id = db.Column(db.Integer, primary_key=True)
@@ -46,6 +63,20 @@ class Company(Base):
     publish_job = db.relationship('Job')
     company_info = db.relationship('CompanyInfo')
 
+    @property
+    def password(self):
+        return self._password
+
+    @password.setter
+    def password(self, orig_password):
+        self._password = generate_password_hash(orig_password)
+
+    def check_password(self, password):
+        self._password = generate_password_hash(self._password, password)
+
+    @property
+    def is_company(self):
+        return self.role == self.ROLE_COMPANY
 
 class Resume(Base):
     id = db.Column(db.Integer, primary_key=True)
