@@ -81,7 +81,7 @@ class CompanyRegisterForm(FlaskForm):
 
 
 class UserInfoForm(FlaskForm):
-    username = StringField(
+    name = StringField(
             '真实姓名', validators=[DataRequired(), Length(3, 64)])
     phone_number = StringField(
             '手机号', validators=[DataRequired(), Length(11)])
@@ -93,13 +93,19 @@ class UserInfoForm(FlaskForm):
         if UserInfo.query.filter_by(phone_number=field.data).first():
             raise ValidationError('手机号已存在')
    
-    def update_userinfo(self, user):
+    def create_userinfo(self, user):
         user_info = UserInfo()
-        user_info.name = self.username.data
+        user_info.name = self.name.data
         user_info.phone_number = self.phone_number.data
         user_info.resume = self.resume.data
         user_info.experience = self.experience.data
         user_info.user = user
+        db.session.add(user_info)
+        db.session.commit()
+        return user_info
+
+    def update_userinfo(self, user_info):
+        self.populate_obj(user_info)
         db.session.add(user_info)
         db.session.commit()
         return user_info

@@ -60,7 +60,7 @@ class User(Base, UserMixin):
 class UserInfo(Base):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(32), index=True, nullable=False)
-    phone_number = db.Column(db.Integer, nullable=False)
+    phone_number = db.Column(db.String(11), nullable=False)
     experience = db.Column(db.Integer, default=0)
     resume = db.Column(db.String(256))
     user_id = db.Column(

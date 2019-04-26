@@ -22,10 +22,16 @@ def edit_userinfo():
     user = User.query.filter_by(username=current_user.username).first()
     user_info = user.user_info
     form = UserInfoForm(obj=user_info)
-    if form.validate_on_submit():
-        form.update_userinfo(user)
-        flash('信息更新成功！', 'success')
-        return redirect(url_for('.index'))
+    if not user_info:
+        if form.validate_on_submit():
+            form.create_userinfo(user)
+            flash('信息更新成功！', 'success')
+            return redirect(url_for('.index'))
+    else:
+        if form.validate_on_submit():
+            form.update_userinfo(user_info)
+            flash('信息更新成功！', 'success')
+            return redirect(url_for('.index'))
     return render_template('user/edit_userinfo.html', form=form)
 
 @user_bp.route('/edit-user', methods=['GET', 'POST'])
