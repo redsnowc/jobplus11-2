@@ -6,7 +6,7 @@ from flask import Blueprint, render_template, flash, redirect, url_for
 from flask_login import current_user
 from jobplus.decorators import company_required
 from jobplus.models import User, CompanyInfo
-from jobplus.forms import CompanyInfoForm, EditCompanyForm
+from jobplus.forms import CompanyInfoForm, EditCompanyForm, PostJobForm
 
 
 company_bp = Blueprint('company', __name__, url_prefix='/company')
@@ -51,3 +51,12 @@ def edit_company():
         return redirect(url_for('.company_info'))
     return render_template('company/edit_company.html', form=form)
         
+@company_bp.route('/post-job', methods=['GET', 'POST'])
+@company_required
+def post_job():
+    form = PostJobForm()
+    if form.validate_on_submit():
+        form.create_job()
+        flash('职位发布成功！', 'success')
+        return redirect(url_for('.index'))
+    return render_template('company/post_job.html', form=form)

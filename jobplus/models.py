@@ -89,7 +89,6 @@ class Job(Base):
     experience_upper = db.Column(db.Integer, default=0)
     education = db.Column(db.String(16), default='学历不限')
     tags = db.Column(db.String(128))
-    intro = db.Column(db.Text)
     company_id = db.Column(
             db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'))
     company = db.relationship('User', uselist=False)

@@ -3,8 +3,8 @@ from wtforms import (StringField, PasswordField, SubmitField, BooleanField,
                      IntegerField, TextAreaField, ValidationError)
 from flask_login import current_user
 from wtforms.validators import (Length, Email, EqualTo, DataRequired, 
-                                AnyOf, URL, NumberRange, Regexp)
-from jobplus.models import db, User, UserInfo, CompanyInfo
+                                AnyOf, URL, NumberRange, Regexp, Optional)
+from jobplus.models import db, User, UserInfo, CompanyInfo, Job
 
 
 class LoginForm(FlaskForm):
@@ -176,3 +176,43 @@ class EditCompanyForm(EditUserForm):
             '重复密码', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('提交')
 
+
+class PostJobForm(FlaskForm):
+    title = StringField(
+            '职位名称', validators=[DataRequired(), Length(4, 128)])
+    salary_lower = IntegerField(
+            '最低工资 (k)', validators=[DataRequired(), 
+                        NumberRange(min=1, message=('无效输入'))])
+    salary_upper = IntegerField(
+            '最高工资 (k)', validators=[DataRequired(),
+                        NumberRange(min=1, message=('无效输入'))])
+    experience_lower = IntegerField(
+            '最低工作年限', validators=[NumberRange(min=0, max=40, 
+                                        message=('无效的输入'))], default=0)
+    experience_upper = IntegerField(
+            '最高工作年限', validators=[NumberRange(min=0, max=40, 
+                                        message=('无效的输入'))], default=0)
+    education = StringField(
+            '学历需求', validators=[Length(2, 16)], default='学历不限')
+    tags = StringField(
+            '标签 (请使用空格分割)', 
+            validators=[Optional(), Length(2, 128)])
+    intro = TextAreaField('职位简介') 
+    submit = SubmitField('提交')
+
+    def create_job(self):
+        job = Job()
+        user = User.query.filter_by(username=current_user.username).first()
+        self.populate_obj(job)
+        job.company = user
+        db.session.add(job)
+        db.session.commit()
+        return job
+
+    def validate_salary_lower(self, field):
+        if field.data >= self.salary_upper.data:
+            raise ValidationError('错误的输入')
+        
+    def validate_experience_lower(self, field):
+        if field.data >= self.experience_upper.data:
+            raise ValidationError('错误的输入')
