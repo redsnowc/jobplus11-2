@@ -9,4 +9,44 @@
     <p class="lead">Birth with destiny, Death with Dignity.</p>
   </div>
 </div>
+<div class="card-columns">
+  {% for job in jobs %}
+    <div class="card bg-light mb-3" style="max-width: 18rem;">
+      <div class="card-body">
+        <a href="#">
+        <h5 class="card-title">{{ job.title }}</h5>
+        </a>
+        <p class="card-text">
+          {{ job.salary_lower }}k-{{ job.salary_upper }}k
+          {% if job.experience_lower == 0 %}
+          经验不限
+          {% else %}
+          {{ job.experience_lower }}-{{ job.experience_upper }}年
+          {% endif %}
+        </p>
+        <p class="card-text">
+          {{ job.education }}
+          {{ job.company.company_info.address }}
+        </p>
+      </div>
+      <div class="card-footer">
+        <div class="media">
+            <a href="#">
+            <img src="{{ job.company.company_info.logo }}" class="mr-3" width="64" height="64" alt="{{ job.company.username }}">
+          <div class="media-body">
+            <h5 class="mt-0">{{ job.company.username }}</h5>
+            </a>
+            <small class="text-muted">{{ job.create_at }}</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+<center>
+    <a href="{{ url_for('home.jobs') }}" type="button" class="btn btn-outline-dark btn-lg">
+    <span class="glyphicon glyphicon" aria-hidden="true"></span>
+    更多职位
+  </a>
+</center>
 {% endblock %}

@@ -11,9 +11,8 @@ home_bp = Blueprint('home', __name__)
 
 @home_bp.route('/')
 def index():
-    job = db.session.query(Job).all()
-    return render_template('index.html', job=job)
-
+    jobs = db.session.query(Job).order_by(Job.create_at.desc()).limit(16).all()
+    return render_template('index.html', jobs=jobs)
 
 @home_bp.route('/login', methods=['GET', 'POST'])
 def login():
@@ -40,7 +39,6 @@ def user_register():
         return redirect(url_for('.login'))
     return render_template('user_register.html', form=form)
 
-
 @home_bp.route('/company-register', methods=['GET', 'POST'])
 def company_register():
     form = CompanyRegisterForm()
@@ -49,3 +47,7 @@ def company_register():
         flash('注册成功，请登录！', 'success')
         return redirect(url_for('.login'))
     return render_template('company_register.html', form=form)
+
+@home_bp.route('/jobs')
+def jobs():
+    return render_template('jobs.html')

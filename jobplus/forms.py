@@ -138,12 +138,12 @@ class EditUserForm(UserRegisterForm):
         
 
 class CompanyInfoForm(FlaskForm):
-    address = StringField('企业地址', validators=[Length(2, 256)])
-    domain = StringField('业务领域', validators=[Length(2, 64)])
-    intro = StringField('企业简介', validators=[Length(20, 256)])
+    address = StringField('企业地址', validators=[Optional(), Length(2, 256)])
+    domain = StringField('业务领域', validators=[Optional(), Length(2, 64)])
+    intro = StringField('企业简介', validators=[Optional(), Length(20, 256)])
     detail = TextAreaField('详细介绍')
-    logo = StringField('企业Logo', validators=[URL()])
-    website = StringField('企业主页', validators=[URL()])
+    logo = StringField('企业Logo', validators=[Optional(), URL()])
+    website = StringField('企业主页', validators=[Optional(), URL()])
     submit = SubmitField('提交')
 
     def create_companyinfo(self, user):
@@ -214,5 +214,14 @@ class PostJobForm(FlaskForm):
             raise ValidationError('错误的输入')
         
     def validate_experience_lower(self, field):
-        if field.data >= self.experience_upper.data:
+        if field.data > self.experience_upper.data:
             raise ValidationError('错误的输入')
+
+
+class EditJobForm(PostJobForm):
+
+    def update_job(self, job):
+        self.populate_obj(job)
+        db.session.add(job)
+        db.session.commit()
+

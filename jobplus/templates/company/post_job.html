@@ -1,9 +1,9 @@
-{% extends "base.html" %}
+{% extends "company/index.html" %}
 {% from "macros.html" import render_form %}
 
 {% block title %}PostJob{% endblock %}
 
-{% block body %}
+{% block company %}
 <div class="form">
   <h2>发布职位</h2>
   {{ render_form(form, url_for('company.post_job')) }}
