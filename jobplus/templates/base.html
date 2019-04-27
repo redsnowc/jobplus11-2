@@ -58,10 +58,11 @@
                  {{ current_user.username }}
               </a>
               <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <a class="dropdown-item" href="#">公司首页</a>
+                <a class="dropdown-item" 
+                   href="{{ url_for('company.index') }}">公司首页</a>
                 <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="{{ url_for('home.logout') }}">
-                   退出登录</a>
+                  <a class="dropdown-item" 
+                     href="{{ url_for('home.logout') }}">退出登录</a>
               </div>
              </li>
            {% else %}

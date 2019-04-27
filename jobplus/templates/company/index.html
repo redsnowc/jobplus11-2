@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block title %}CompanyPage{% endblock %}
+
+{% block body %}
+<div class="row">
+  <div class="col-md-3">
+    <h4>管理</h4>
+    <div class="list-group">
+        <a href="{{ url_for('company.company_info') }}" class="list-group-item">企业信息</a>
+        <a href="#" class="list-group-item">职位发布</a>
+    </div>
+{% endblock %}

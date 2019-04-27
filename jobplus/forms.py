@@ -1,9 +1,10 @@
 from flask_wtf import FlaskForm
 from wtforms import (StringField, PasswordField, SubmitField, BooleanField, 
                      IntegerField, TextAreaField, ValidationError)
+from flask_login import current_user
 from wtforms.validators import (Length, Email, EqualTo, DataRequired, 
-                                AnyOf, URL, NumberRange)
-from jobplus.models import db, User, UserInfo
+                                AnyOf, URL, NumberRange, Regexp)
+from jobplus.models import db, User, UserInfo, CompanyInfo
 
 
 class LoginForm(FlaskForm):
@@ -13,12 +14,12 @@ class LoginForm(FlaskForm):
     remember_me = BooleanField('记住我')
     submit = SubmitField('提交')
 
-    def validata_email(self, field):
+    def validate_email(self, field):
         if not User.query.filter_by(email=field.data).first():
             raise ValidationError('邮箱未注册')
 
-    def validata_password(self, field):
-        user = User.query.filter_by(email=field.data).first()
+    def validate_password(self, field):
+        user = User.query.filter_by(email=self.email.data).first()
         if user and not user.check_password(field.data):
             raise ValidationError('密码错误')
 
@@ -84,14 +85,22 @@ class UserInfoForm(FlaskForm):
     name = StringField(
             '真实姓名', validators=[DataRequired(), Length(3, 64)])
     phone_number = StringField(
-            '手机号', validators=[DataRequired(), Length(11)])
+            '手机号', validators=[DataRequired(), 
+                Regexp('^1[3578]\d{9}$', message="手机号格式不正确")])
     experience = IntegerField('工作年限', validators=[DataRequired()])
     resume = StringField('简历地址', validators=[DataRequired(), URL()])
     submit = SubmitField('提交')
 
     def validate_phone_number(self, field):
-        if UserInfo.query.filter_by(phone_number=field.data).first():
-            raise ValidationError('手机号已存在')
+        user_info = User.query.filter_by(
+                username=current_user.username).first().user_info
+        if not user_info:
+            if UserInfo.query.filter_by(phone_number=field.data).first():
+                raise ValidationError('手机号已存在')
+        else:
+            if field.data != user_info.phone_number and (
+                UserInfo.query.filter_by(phone_number=field.data).first()):
+                raise ValidationError('手机号已存在')
    
     def create_userinfo(self, user):
         user_info = UserInfo()
@@ -120,9 +129,50 @@ class EditUserForm(UserRegisterForm):
         return user
     
     def validate_email(self, field):
-        if User.query.filter_by(email=field.data).first():
+        if field.data != current_user.email and User.query.filter_by(email=field.data).first():
             raise ValidationError('邮箱已存在')
 
     def validate_username(self, field):
-        if User.query.filter_by(username=field.data).first():
+        if field.data != current_user.username and User.query.filter_by(username=field.data).first():
             raise ValidationError('用户名已存在')
+        
+
+class CompanyInfoForm(FlaskForm):
+    address = StringField('企业地址', validators=[Length(2, 256)])
+    domain = StringField('业务领域', validators=[Length(2, 64)])
+    intro = StringField('企业简介', validators=[Length(20, 256)])
+    detail = TextAreaField('详细介绍')
+    logo = StringField('企业Logo', validators=[URL()])
+    website = StringField('企业主页', validators=[URL()])
+    submit = SubmitField('提交')
+
+    def create_companyinfo(self, user):
+        company_info = CompanyInfo()
+        company_info.address = self.address.data
+        company_info.domain = self.domain.data
+        company_info.intro = self.intro.data
+        company_info.detail = self.detail.data
+        company_info.logo = self.logo.data
+        company_info.website = self.website.data
+        company_info.company = user
+        db.session.add(company_info)
+        db.session.commit()
+        return company_info
+
+    def update_companyinfo(self, company_info):
+        self.populate_obj(company_info)
+        db.session.add(company_info)
+        db.session.commit()
+        return company_info
+
+
+class EditCompanyForm(EditUserForm):
+    username = StringField(
+            '企业名称', validators=[DataRequired(), Length(3, 64)])
+    email = StringField('邮箱', validators=[DataRequired(), Email()])
+    password = PasswordField(
+            '密码', validators=[DataRequired(), Length(6, 24)])
+    repeat_password = PasswordField(
+            '重复密码', validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('提交')
+

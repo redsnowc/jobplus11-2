@@ -1,7 +1,6 @@
 '''
-User 普通用户和管理员的数据表
-Company 公司用户的数据表
-Resume 简历数据表
+User 用户数据表
+UserInfo 用户信息表
 CompanyInfo 公司简介数据表
 Job 职位数据表
 '''
@@ -35,7 +34,7 @@ class User(Base, UserMixin):
     role = db.Column(db.SmallInteger, default=ROLE_USER)
     user_info = db.relationship('UserInfo', uselist=False)
     publish_job = db.relationship('Job')
-    company_info = db.relationship('CompanyInfo')
+    company_info = db.relationship('CompanyInfo', uselist=False)
 
     @property
     def password(self):
@@ -46,7 +45,7 @@ class User(Base, UserMixin):
         self._password = generate_password_hash(orig_password)
 
     def check_password(self, password):
-        self._password = generate_password_hash(self._password, password)
+        return check_password_hash(self._password, password)
 
     @property
     def is_admin(self):
@@ -59,7 +58,7 @@ class User(Base, UserMixin):
 
 class UserInfo(Base):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(32), index=True, nullable=False)
+    name = db.Column(db.String(32))
     phone_number = db.Column(db.String(11), nullable=False)
     experience = db.Column(db.Integer, default=0)
     resume = db.Column(db.String(256))
@@ -70,9 +69,12 @@ class UserInfo(Base):
 
 class CompanyInfo(Base):
     id = db.Column(db.Integer, primary_key=True)
-    city = db.Column(db.String(32))
-    field = db.Column(db.String(64))
-    intro = db.Column(db.Text)
+    address = db.Column(db.String(256))
+    domain = db.Column(db.String(64))
+    intro = db.Column(db.String(256))
+    detail = db.Column(db.Text)
+    logo = db.Column(db.String(256))
+    website = db.Column(db.String(256))
     company_id = db.Column(
             db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'))
     company = db.relationship('User', uselist=False)
