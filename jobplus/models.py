@@ -82,13 +82,14 @@ class CompanyInfo(Base):
 
 class Job(Base):
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(128))
+    title = db.Column(db.String(128), nullable=False)
     salary_lower = db.Column(db.Integer, nullable=False)
     salary_upper = db.Column(db.Integer, nullable=False)
     experience_lower = db.Column(db.Integer, default=0)
     experience_upper = db.Column(db.Integer, default=0)
     education = db.Column(db.String(16), default='学历不限')
     tags = db.Column(db.String(128))
+    intro = db.Column(db.Text)
     company_id = db.Column(
             db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'))
     company = db.relationship('User', uselist=False)

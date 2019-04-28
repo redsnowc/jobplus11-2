@@ -28,13 +28,16 @@
           {{ job.education }}
           {{ job.company.company_info.address }}
         </p>
+        {% for tag in job.tags.split() %}
+        <span class="badge badge-pill badge-info">{{ tag }}</span>
+        {% endfor %}
       </div>
       <div class="card-footer">
         <div class="media">
             <a href="#">
             <img src="{{ job.company.company_info.logo }}" class="mr-3" width="64" height="64" alt="{{ job.company.username }}">
           <div class="media-body">
-            <h5 class="mt-0">{{ job.company.username }}</h5>
+            <p class="mt-0">{{ job.company.username }}</p>
             </a>
             <small class="text-muted">{{ job.create_at }}</small>
           </div>

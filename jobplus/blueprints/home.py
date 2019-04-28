@@ -11,7 +11,7 @@ home_bp = Blueprint('home', __name__)
 
 @home_bp.route('/')
 def index():
-    jobs = db.session.query(Job).order_by(Job.create_at.desc()).limit(16).all()
+    jobs = db.session.query(Job).order_by(Job.create_at.desc()).limit(15).all()
     return render_template('index.html', jobs=jobs)
 
 @home_bp.route('/login', methods=['GET', 'POST'])
