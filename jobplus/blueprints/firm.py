@@ -1,10 +1,10 @@
 '''
-Job蓝图
+Firm蓝图
 '''
 
 from flask import (Blueprint, render_template, flash, redirect, url_for,
-                   request, current_app)
-from jobplus.models import Job
+                   request, current_app, abort)
+from jobplus.models import Job, User
 from jobplus.forms import *
 
 
@@ -20,4 +20,19 @@ def firms():
         )
     return render_template('firms/firms.html', pagination=pagination)
 
-@firm_bp.route('/<int:
+@firm_bp.route('/<int:user_id>')
+def detail(user_id):
+    firm = User.query.get_or_404(user_id)
+    if firm.role != 20:
+        abort(404)
+    else:
+        return render_template('firms/detail.html', firm=firm)
+
+@firm_bp.route('/<int:user_id>/jobs')
+def jobs(user_id):
+    firm = User.query.get_or_404(user_id)
+    if firm.role != 20:
+        abort(404)
+    else:
+        jobs = firm.publish_job
+        return render_template('firms/jobs.html', jobs=jobs)

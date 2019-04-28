@@ -34,7 +34,7 @@
       </div>
       <div class="card-footer">
         <div class="media">
-            <a href="#">
+            <a href="{{ url_for('firm.detail', user_id=job.company.id) }}">
             <img src="{{ job.company.company_info.logo }}" class="mr-3" width="64" height="64" alt="{{ job.company.username }}">
           <div class="media-body">
             <p class="mt-0">{{ job.company.username }}</p>

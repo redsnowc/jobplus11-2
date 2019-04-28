@@ -15,7 +15,7 @@
     <div class="card bg-light mb-3" style="max-width: 18rem;">
       <div class="card-body">
         <div class="media">
-          <a href="#">
+            <a href="{{ url_for('firm.detail', user_id=company.id) }}">
             <img src="{{ company.company_info.logo }}" class="mr-3" width="64" height="64" alt="{{ company.username }}">
             <div class="media-body">
               <p class="mt-0">{{ company.username }}</p>
