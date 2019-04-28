@@ -12,7 +12,7 @@
 </div>
 <div class="card-columns">
   {% for company in pagination.items %}
-    <div class="crad bg-light mb-3" style="max-width: 18rem;">
+    <div class="card bg-light mb-3" style="max-width: 18rem;">
       <div class="card-body">
         <div class="media">
           <a href="#">
@@ -20,12 +20,26 @@
             <div class="media-body">
               <p class="mt-0">{{ company.username }}</p>
           </a>
+              <p class="mt-0">
+              {{ company.company_info.address }}
+                <a href="{{ company.company_info.website }}">
+              企业官网</p>
+                </a>
             </div>
         </div>
-        <div class="card-footer">
-          <p>{{ company.company_info.intro }}</p>
-        </div>
+        {% for domain in company.company_info.domain.split() %}
+          <span class="badge badge-pill badge-info">{{ domain }}</span>
+        {% endfor %}
       </div>
+        <div class="card-footer">
+          <center>
+            <p>{{ company.company_info.intro }}</p>
+            <p>再招职位：
+            <a href="#">
+            {{ company.publish_job|length }}</p>
+            </a>
+          </center>
+        </div>
     </div>
   {% endfor %}
 </div>
