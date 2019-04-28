@@ -19,3 +19,8 @@ def jobs():
             error_out=False
         )
     return render_template('jobs/jobs.html', pagination=pagination)
+
+@job_bp.route('/<int:job_id>')
+def job_detail(job_id):
+    job = Job.query.get_or_404(job_id)
+    return render_template('jobs/detail.html', job=job)

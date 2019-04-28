@@ -55,6 +55,10 @@ class User(Base, UserMixin):
     def is_company(self):
         return self.role == self.ROLE_COMPANY
 
+    @property
+    def is_user(self):
+        return self.role == self.ROLE_USER
+
 
 class UserInfo(Base):
     id = db.Column(db.Integer, primary_key=True)

@@ -20,3 +20,4 @@ def firms():
         )
     return render_template('firms/firms.html', pagination=pagination)
 
+@firm_bp.route('/<int:
