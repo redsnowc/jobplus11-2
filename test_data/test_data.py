@@ -55,15 +55,25 @@ def create_job():
                 job.experience_upper = 0
             else:
                 job.experience_upper = job.experience_lower + randint(1,4)
-            job.education = choice(['大专', '本科', '硕士', '博士'])
+            job.education = choice(['大专', '本科', '硕士', '博士', '经验不限'])
             job.tags = 'Python Flask Mysql'
             job.intro = fc.text()
             job.company = user
             db.session.add(job)
             db.session.commit()
 
+def create_admin():
+    user = User()
+    user.name = 'admin'
+    user.email = 'admin@admin.com'
+    user.password = '123456'
+    user.role = 30
+    db.session.add(user)
+    db.session.commit()
 
 def run():
     create_user()
     create_company()
     create_job()
+    create_admin()
+
