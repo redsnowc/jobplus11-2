@@ -2,7 +2,8 @@
 首页蓝图
 '''
 
-from flask import Blueprint, render_template, flash, redirect, url_for
+from flask import (Blueprint, render_template, flash, redirect, url_for,
+                   request, current_app)
 from flask_login import login_user, logout_user, login_required
 from jobplus.models import User, Job, db
 from jobplus.forms import LoginForm, UserRegisterForm, CompanyRegisterForm
@@ -50,4 +51,10 @@ def company_register():
 
 @home_bp.route('/jobs')
 def jobs():
-    return render_template('jobs.html')
+    page = request.args.get('page', default=1, type=int)
+    pagination = Job.query.paginate(
+            page=page,
+            per_page=current_app.config['HOME_PER_PAGE'],
+            error_out=False
+        )
+    return render_template('jobs.html', pagination=pagination)
