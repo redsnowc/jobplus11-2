@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% from "macros.html" import render_pagination %}
+
+{% block title %}Jobs{% endblock %}
+
+{% block body%}
+<div class="jumbotron jumbotron-fluid">
+  <div class="container">
+    <h1 class="display-4">JOBPLUS</h1>
+    <p class="lead">Birth with destiny, Death with Dignity.</p>
+  </div>
+</div>
+<div class="card-columns">
+  {% for company in pagination.items %}
+    <div class="crad bg-light mb-3" style="max-width: 18rem;">
+      <div class="card-body">
+        <div class="media">
+          <a href="#">
+            <img src="{{ company.company_info.logo }}" class="mr-3" width="64" height="64" alt="{{ company.username }}">
+            <div class="media-body">
+              <p class="mt-0">{{ company.username }}</p>
+          </a>
+            </div>
+        </div>
+        <div class="card-footer">
+          <p>{{ company.company_info.intro }}</p>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+{{ render_pagination(pagination, 'home.companies') }}
+{% endblock %}

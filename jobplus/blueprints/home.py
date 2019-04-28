@@ -58,3 +58,13 @@ def jobs():
             error_out=False
         )
     return render_template('jobs.html', pagination=pagination)
+
+@home_bp.route('/companies')
+def companies():
+    page = request.args.get('page', default=1, type=int)
+    pagination = User.query.filter_by(role=20).paginate(
+            page=page,
+            per_page=current_app.config['HOME_PER_PAGE'],
+            error_out=False
+        )
+    return render_template('companies.html', pagination=pagination)
