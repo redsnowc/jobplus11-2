@@ -1,0 +1,9 @@
+{% extends "admin/index.html" %}
+{% from "macros.html" import render_form %}
+
+{% block title %}Edit-Job{% endblock %}
+
+{% block admin %}
+<h4>编辑职位</h4>
+{{ render_form(form, url_for('admin.edit_job', job_id=job.id)) }}
+{% endblock %}

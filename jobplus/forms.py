@@ -225,3 +225,46 @@ class EditJobForm(PostJobForm):
         db.session.add(job)
         db.session.commit()
 
+
+class AdminEditUserForm(EditUserForm):
+    username = StringField(
+            '用户名', validators=[DataRequired(), Length(3, 24)])
+    email = StringField('邮箱', validators=[DataRequired(), Email()])
+    role = IntegerField('权限', validators=[Optional(), AnyOf([10, 20, 30])])
+    password = PasswordField(
+            '密码', validators=[Optional(), Length(6, 24)])
+    repeat_password = PasswordField(
+            '重复密码', validators=[EqualTo('password')])
+    submit = SubmitField('提交')
+
+    def validate_email(self, field):
+        if field.data != self.email.data and User.query.filter_by(email=field.data).first():
+            raise ValidationError('邮箱已存在')
+
+    def validate_username(self, field):
+        if field.data != self.username.data and User.query.filter_by(username=field.data).first():
+            raise ValidationError('用户名已存在')
+    
+
+class AdminUserInfoForm(UserInfoForm):
+    name = StringField(
+            '真实姓名', validators=[Optional(), Length(3, 64)])
+    phone_number = StringField(
+            '手机号', validators=[Optional(), 
+                Regexp('^1[3578]\d{9}$', message="手机号格式不正确")])
+    experience = IntegerField('工作年限', validators=[Optional()])
+    resume = StringField('简历地址', validators=[Optional(), URL()])
+    submit = SubmitField('提交')
+
+    def validate_phone_number(self, field):
+        if field.data != self.phone_number.data and (
+            UserInfo.query.filter_by(phone_number=field.data).first()):
+            raise ValidationError('手机号已存在')
+
+    def update_userinfo(self, user_info, user):
+        self.populate_obj(user_info)
+        user_info.user = user
+        db.session.add(user_info)
+        db.session.commit()
+        return user_info
+

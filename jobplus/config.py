@@ -6,7 +6,7 @@
 class BaseConfig:
     SECRET_KEY = 'SKLDJFASLKDJFKLSFJLSKDF;J'
     HOME_PER_PAGE = 9
-    COMPANY_PER_PAGE = 1
+    COMPANY_PER_PAGE = 15
     
 
 class DevelopmentConfig(BaseConfig):

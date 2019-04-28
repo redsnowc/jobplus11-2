@@ -6,8 +6,8 @@ from flask import Flask
 from flask_migrate import Migrate
 from flask_login import LoginManager
 from jobplus.config import configs
-from jobplus.blueprints import home_bp, user_bp, company_bp, job_bp, firm_bp
 from jobplus.models import db, User
+from jobplus.blueprints import home_bp, user_bp, company_bp, job_bp, firm_bp, admin_bp
 
 
 def create_app(config):
@@ -24,6 +24,8 @@ def register_blueprints(app):
     app.register_blueprint(company_bp)
     app.register_blueprint(job_bp)
     app.register_blueprint(firm_bp)
+    app.register_blueprint(admin_bp)
+
 
 def register_extensions(app):
     db.init_app(app)

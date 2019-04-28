@@ -1,9 +1,9 @@
-{% extends "company/index.html" %}
+{% extends "admin/index.html" %}
 {% from "macros.html" import render_pagination %}
 
-{% block title %}Company-Jobs{% endblock %}
+{% block title %}Admin-Jobs{% endblock %}
 
-{% block company %}
+{% block admin %}
 <table class="table">
   <thead>
     <tr>
@@ -21,7 +21,7 @@
         <td>{{ job.id }}</td>
         <td>{{ job.title }}</td>
         <td>{{ job.salary_lower }}k-{{ job.salary_upper }}k</td>
-        <td>{{ job.experience_lower}}-{{ job.experience_upper }}</td>
+        <td>{{ job.experience_lower }}-{{ job.experience_upper }}</td>
         <td>{{ job.education }}</td>
         <td>{{ job.tags }}</td>
         <td>
@@ -34,9 +34,9 @@
 
             <div class="dropdown-menu">
                <a class="dropdown-item" 
-                  href="{{ url_for('company.edit_job', job_id=job.id) }}">编辑</a>
+                  href="{{ url_for('admin.edit_job', job_id=job.id) }}">编辑</a>
                <a class="dropdown-item" 
-                  href="{{ url_for('company.del_job', job_id=job.id) }}">删除</a>
+                  href="{{ url_for('admin.del_job', job_id=job.id) }}">删除</a>
                <a class="dropdown-item" 
                   href="{{ url_for('job.job_detail', job_id=job.id) }}">查看</a>
             </div>
@@ -47,5 +47,5 @@
     </tbody>
   </thead>
 </table>
-{{ render_pagination(pagination, 'company.jobs') }}
+{{ render_pagination(pagination, 'admin.jobs') }}
 {% endblock %}
