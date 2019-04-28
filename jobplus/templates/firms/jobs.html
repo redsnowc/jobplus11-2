@@ -22,23 +22,33 @@
 </div>
 <ul class="nav nav-tabs">
   <li class="nav-item">
-    <a class="nav-link active" href="#">企业详情</a>
+  <a class="nav-link" href="{{ url_for('firm.detail', user_id=firm.id) }}">企业详情</a>
   </li>
   <li class="nav-item" >
-  <a class="nav-link" href="{{ url_for('firm.jobs', user_id=firm.id) }}">在招职位: {{ firm.publish_job|length }}</a>
+    <a class="nav-link active" href="#">在招职位: {{ firm.publish_job|length }}</a>
   </li>
 </ul>
 <div class="row">
   <div class="col-md-8">
     <br>
-    <h4>业务领域</h4>
-    {% for domain in firm.company_info.domain.split() %}
-    <span class="badge badge-pill badge-info">{{ domain }}</span>
-    {% endfor %}
-    <br>
-    <br>
-    <h4>企业介绍</h4>
-    <p>{{ firm.company_info.detail }}</p>
+    <div class="list-group">
+      {% for job in jobs %}
+      <a href="{{ url_for('job.job_detail', job_id=job.id) }}" class="list-group-item list-group-item-action flex-column align-items-start">
+        <div class="d-flex w-100 justify-content-between">
+          <h5 class="mb-1">{{ job.title  }}</h5>
+          <small class="text-muted">{{ job.create_at }}</small>
+        </div>
+        <p class="mb-1">{{ job.salary_lower }}k-{{ job.salary_upper }}k
+                        {% if job.experience_lower == 0 %}
+                        经验不限 /
+                        {% else %}
+                        {{ job.experience_lower }}-{{ job.experience_upper }}年 /
+                        {% endif %}
+                        {{ job.education }}
+        </p>
+      </a>
+      {% endfor %}
+    </div>
   </div>
   <div class="col-md-4">
     <br>

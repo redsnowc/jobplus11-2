@@ -35,7 +35,7 @@
           <center>
             <p>{{ company.company_info.intro }}</p>
             <p>再招职位：
-            <a href="#">
+            <a href="{{ url_for('firm.jobs', user_id=company.id) }}">
             {{ company.publish_job|length }}</p>
             </a>
           </center>

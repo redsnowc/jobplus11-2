@@ -35,4 +35,4 @@ def jobs(user_id):
         abort(404)
     else:
         jobs = firm.publish_job
-        return render_template('firms/jobs.html', jobs=jobs)
+        return render_template('firms/jobs.html', jobs=jobs, firm=firm)
