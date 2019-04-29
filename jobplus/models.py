@@ -32,9 +32,13 @@ class User(Base, UserMixin):
             db.String(64), unique=True, index=True, nullable=False)
     _password = db.Column('password', db.String(256), nullable=False)
     role = db.Column(db.SmallInteger, default=ROLE_USER)
-    user_info = db.relationship('UserInfo', uselist=False)
-    publish_job = db.relationship('Job')
-    company_info = db.relationship('CompanyInfo', uselist=False)
+    user_info = db.relationship('UserInfo', uselist=False, backref='user', 
+            cascade='all, delete-orphan', passive_deletes = True)
+    publish_job = db.relationship('Job', backref='company',
+            cascade='all, delete-orphan', passive_deletes = True)
+    company_info = db.relationship('CompanyInfo', uselist=False, 
+            backref='company', cascade='all, delete-orphan', 
+            passive_deletes = True)
 
     @property
     def password(self):
@@ -68,7 +72,7 @@ class UserInfo(Base):
     resume = db.Column(db.String(256))
     user_id = db.Column(
             db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'))
-    user = db.relationship('User', uselist=False)
+    #user = db.relationship('User', uselist=False)
 
 
 class CompanyInfo(Base):
@@ -81,7 +85,7 @@ class CompanyInfo(Base):
     website = db.Column(db.String(256))
     company_id = db.Column(
             db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'))
-    company = db.relationship('User', uselist=False)
+    #company = db.relationship('User', uselist=False)
             
 
 class Job(Base):
@@ -96,5 +100,5 @@ class Job(Base):
     intro = db.Column(db.Text)
     company_id = db.Column(
             db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'))
-    company = db.relationship('User', uselist=False)
+    #company = db.relationship('User', uselist=False)
 

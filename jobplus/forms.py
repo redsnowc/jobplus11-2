@@ -140,7 +140,7 @@ class EditUserForm(UserRegisterForm):
 class CompanyInfoForm(FlaskForm):
     address = StringField('企业地址', validators=[Optional(), Length(2, 256)])
     domain = StringField('业务领域 (请使用空格分割)', validators=[Optional(), Length(2, 64)])
-    intro = StringField('企业简介', validators=[Optional(), Length(20, 256)])
+    intro = StringField('企业简介', validators=[Optional(), Length(8, 256)])
     detail = TextAreaField('详细介绍')
     logo = StringField('企业Logo', validators=[Optional(), URL()])
     website = StringField('企业主页', validators=[Optional(), URL()])

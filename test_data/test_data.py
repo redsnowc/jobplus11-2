@@ -64,7 +64,7 @@ def create_job():
 
 def create_admin():
     user = User()
-    user.name = 'admin'
+    user.username = 'admin'
     user.email = 'admin@admin.com'
     user.password = '123456'
     user.role = 30

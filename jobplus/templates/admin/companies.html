@@ -1,0 +1,56 @@
+{% extends "admin/index.html" %}
+{% from "macros.html" import render_pagination %}
+
+{% block title %}Admin-Users{% endblock %}
+
+{% block admin %}
+<table class="table">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>企业名</th>
+      <th>Email</th>
+      <th>操作</th>
+    </tr>
+    <tbody>
+      {% for user in pagination.items %}
+      <tr>
+        <td>{{ user.id }}</td>
+        <td>{{ user.username }}</td>
+        <td>{{ user.email }}</td>
+        <td>
+          <div class="btn-group">
+            <button class="btn btn-secondary btn-sm dropdown-toggle" 
+                    type="button" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">
+               操作
+            </button>
+
+            <div class="dropdown-menu">
+              <a class="dropdown-item" 
+                 href="{{ url_for('firm.detail', user_id=user.id) }}">
+                       查看企业信息</a>
+              <a class="dropdown-item" 
+                 href="{{ url_for('firm.jobs', user_id=user.id) }}">
+                       查看再招职位</a>
+              <a class="dropdown-item" 
+                 href="{{ url_for('admin.edit_user', user_id=user.id) }}">
+                       编辑账户信息</a>
+              <a class="dropdown-item" 
+                 href="{{ url_for('admin.edit_companyinfo', 
+                       user_id=user.id) }}">
+                       编辑企业信息</a>
+              <a class="dropdown-item" 
+                 href="{{ url_for('admin.del_user', user_id=user.id) }}">
+                       删除</a>
+            </div>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </thead>
+</table>
+{{ render_pagination(pagination, 'admin.companies') }}
+{% endblock %}
+

@@ -74,8 +74,11 @@ def edit_user(user_id):
 @admin_required
 def edit_userinfo(user_id):
     user = User.query.get_or_404(user_id)
-    user_info = user.user_info
-    form = AdminUserInfoForm(obj=user_info)
+    if user.role == 10:
+        user_info = user.user_info
+        form = AdminUserInfoForm(obj=user_info)
+    else:
+        abort(404)
     if form.validate_on_submit():
         if user_info:
             form.update_userinfo(user_info, user)
@@ -97,4 +100,50 @@ def del_user(user_id):
     flash('用户已删除', 'success')
     return redirect(url_for('admin.users'))
 
+@admin_bp.route('/companies')
+@admin_required
+def companies():
+    page = request.args.get('page', default=1, type=int)
+    pagination = User.query.filter_by(role=20).paginate(
+            page=page,
+            per_page=current_app.config['COMPANY_PER_PAGE'],
+            error_out=False
+        )
+    return render_template('admin/companies.html', pagination=pagination)
+
+@admin_bp.route('/edit-companyinfo/<int:user_id>', methods=['GET', 'POST'])
+@admin_required
+def edit_companyinfo(user_id):
+    user = User.query.get_or_404(user_id)
+    if user.role == 20:
+        company_info = user.company_info
+        form = CompanyInfoForm(obj=company_info)
+    else:
+        abort(404)
+    if form.validate_on_submit():
+        if company_info:
+            form.update_companyinfo(company_info)
+            flash('企业信息更新成功', 'success')
+            return redirect(url_for('.companies'))
+        else:
+            form.create_companyinfo(user)
+            flash('企业信息更新成功', 'success')
+            return redirect(url_for('.companies'))
+    return render_template('admin/edit_companyinfo.html',
+                           form=form, user=user)
+
+''''
+@admin_bp.route('/del-company/<int:user_id>', methods=['GET', 'POST'])
+@admin_required
+def del_company(user_id):
+    user = User.query.get_or_404(user_id)
+    company_info = user.company_info
+    job = user.publish_job
+    db.session.delete(company_info)
+    db.session.delete(job)
+    db.session.delete(user)
+    db.session.commit()
+    flash('用户已删除', 'success')
+    return redirect(url_for('.companies'))
+'''
 
