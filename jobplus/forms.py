@@ -236,7 +236,7 @@ class AdminEditUserForm(EditUserForm):
     repeat_password = PasswordField(
             '重复密码', validators=[EqualTo('password')])
     submit = SubmitField('提交')
-
+    
     def validate_email(self, field):
         if field.data != self.email.data and User.query.filter_by(email=field.data).first():
             raise ValidationError('邮箱已存在')
@@ -267,4 +267,26 @@ class AdminUserInfoForm(UserInfoForm):
         db.session.add(user_info)
         db.session.commit()
         return user_info
+
+
+class AdminCreateUserForm(UserRegisterForm):
+    username = StringField(
+            '用户名', validators=[DataRequired(), Length(3, 24)])
+    email = StringField('邮箱', validators=[DataRequired(), Email()])
+    role = IntegerField('权限', validators=[DataRequired(), AnyOf([10, 20, 30])])
+    password = PasswordField(
+            '密码', validators=[DataRequired(), Length(6, 24)])
+    repeat_password = PasswordField(
+            '重复密码', validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('提交')
+    
+    def create_user(self):
+        user = User()
+        user.username = self.username.data
+        user.email = self.email.data
+        user.password = self.password.data
+        user.role = self.role.data
+        db.session.add(user)
+        db.session.commit()
+        return user
 

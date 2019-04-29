@@ -7,7 +7,8 @@ from flask import (Blueprint, render_template, flash, redirect, url_for,
 from jobplus.decorators import admin_required
 from jobplus.models import User, CompanyInfo, Job, db, UserInfo
 from jobplus.forms import (CompanyInfoForm, EditCompanyForm, EditJobForm, 
-                           AdminEditUserForm, AdminUserInfoForm)
+                           AdminEditUserForm, AdminUserInfoForm, 
+                           AdminCreateUserForm)
 
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
@@ -179,4 +180,15 @@ def users_ban():
             error_out=False
         )
     return render_template('admin/ban_users.html', pagination=pagination)
+
+@admin_bp.route('/create-user', methods=['GET', 'POST'])
+@admin_required
+def create_user():
+    form = AdminCreateUserForm()
+    if form.validate_on_submit():
+        form.create_user()
+        flash('用户创建成功', 'success')
+        return redirect(url_for('.index'))
+    return render_template('admin/create_user.html', form=form)
+    
 

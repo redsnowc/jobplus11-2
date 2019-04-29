@@ -20,6 +20,10 @@
          class="list-group-item list-group-item-action list-group-item-light">
          职位</a>
     </div>
+      <br>
+      <a href="{{ url_for('admin.create_user') }}" 
+         class="btn btn-outline-dark" role="button" 
+         aria-pressed="true">创建用户</a>
   </div>
 <div class="col-md-9">
   {% block admin %}{% endblock %}
