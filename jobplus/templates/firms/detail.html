@@ -32,9 +32,13 @@
   <div class="col-md-8">
     <br>
     <h4>业务领域</h4>
+    {% if firm.company_info.domain %}
     {% for domain in firm.company_info.domain.split() %}
     <span class="badge badge-pill badge-info">{{ domain }}</span>
     {% endfor %}
+    {% else %}
+    <span class="badge badge-pill badge-info">暂无</span>
+    {% endif %}
     <br>
     <br>
     <h4>企业介绍</h4>

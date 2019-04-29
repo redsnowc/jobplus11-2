@@ -27,9 +27,13 @@
                 </a>
             </div>
         </div>
+        {% if company.company_info.domain %}
         {% for domain in company.company_info.domain.split() %}
           <span class="badge badge-pill badge-info">{{ domain }}</span>
         {% endfor %}
+        {% else %}
+          <span class="badge badge-pill badge-info">暂无</span>
+        {% endif %}
       </div>
         <div class="card-footer">
           <center>
