@@ -20,6 +20,20 @@ class Base(db.Model):
             db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 
+class SendCV(Base):
+    UNREAD = 10
+    REFUSE = 20
+    ACCEPT = 30
+
+    sender_id = db.Column(db.Integer, db.ForeignKey(
+        'user.id'), primary_key=True)
+    job_id = db.Column(db.Integer, db.ForeignKey(
+        'job.id'), primary_key=True)
+    status = db.Column(db.SmallInteger, default=UNREAD)
+    sender = db.relation('User', back_populates='jobs', lazy='joined')
+    job = db.relation('Job', back_populates='senders', lazy='joined')
+    
+
 class User(Base, UserMixin):
     ROLE_USER = 10
     ROLE_COMPANY = 20
@@ -39,6 +53,9 @@ class User(Base, UserMixin):
     company_info = db.relationship('CompanyInfo', uselist=False, 
             backref='company', cascade='all, delete-orphan', 
             passive_deletes = True)
+    # test
+    jobs = db.relationship('SendCV', back_populates='sender', 
+                            cascade='all')
 
     @property
     def password(self):
@@ -98,4 +115,5 @@ class Job(Base):
     intro = db.Column(db.Text)
     company_id = db.Column(
             db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'))
-
+    # test
+    senders = db.relationship('SendCV', back_populates='job', cascade='all')

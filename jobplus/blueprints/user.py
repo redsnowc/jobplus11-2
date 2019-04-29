@@ -2,10 +2,11 @@
 用户蓝图
 '''
 
-from flask import Blueprint, render_template, flash, redirect, url_for
+from flask import (Blueprint, render_template, flash, redirect, 
+                   url_for, abort)
 from flask_login import current_user
 from jobplus.decorators import user_required
-from jobplus.models import User, UserInfo
+from jobplus.models import User, UserInfo, SendCV, Job, db
 from jobplus.forms import UserInfoForm, EditUserForm
 
 
@@ -51,3 +52,17 @@ def edit_user():
         return redirect(url_for('.index'))
     return render_template('user/edit_user.html', form=form)
         
+@user_bp.route('/send-cv/<int:job_id>', methods=['GET', 'POST'])
+@user_required
+def send_cv(job_id):
+    job = Job.query.filter_by(id=job_id).first_or_404()
+    user = User.query.filter_by(username=current_user.username).first()
+    send_cv = SendCV() 
+    send_cv.sender = user
+    send_cv.job = job
+    db.session.add(send_cv)
+    db.session.commit()
+    flash('简历投递成功！', 'success')
+    return redirect(url_for('job.jobs'))
+    
+

@@ -41,7 +41,9 @@
       {% endif %}
       <p>学历: {{ job.education }}</p>
       {% if current_user.is_authenticated and current_user.is_user %}
-      <a href="#" class="btn btn-outline-dark" role="button" aria-pressed="true">投递简历</a>
+      <a href="{{ url_for('user.send_cv', job_id=job.id) }}" 
+         class="btn btn-outline-dark" role="button" 
+         aria-pressed="true">投递简历</a>
       {% endif %}
       </center>
   </div>
