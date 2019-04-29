@@ -52,17 +52,18 @@ def edit_user():
         return redirect(url_for('.index'))
     return render_template('user/edit_user.html', form=form)
         
-@user_bp.route('/send-cv/<int:job_id>', methods=['GET', 'POST'])
+@user_bp.route('/send-cv/<int:job_id>/<int:company_id>', methods=['GET', 'POST'])
 @user_required
-def send_cv(job_id):
+def send_cv(job_id, company_id):
     job = Job.query.filter_by(id=job_id).first_or_404()
     user = User.query.filter_by(username=current_user.username).first()
+    company = User.query.filter_by(id=company_id).first()
     send_cv = SendCV() 
     send_cv.sender = user
     send_cv.job = job
+    send_cv.receiver = company
     db.session.add(send_cv)
     db.session.commit()
     flash('简历投递成功！', 'success')
     return redirect(url_for('job.jobs'))
     
-

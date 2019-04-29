@@ -27,11 +27,16 @@ class SendCV(Base):
 
     sender_id = db.Column(db.Integer, db.ForeignKey(
         'user.id'), primary_key=True)
+    receiver_id = db.Column(db.Integer, db.ForeignKey(
+        'user.id'), primary_key=True)
     job_id = db.Column(db.Integer, db.ForeignKey(
         'job.id'), primary_key=True)
     status = db.Column(db.SmallInteger, default=UNREAD)
-    sender = db.relation('User', back_populates='jobs', lazy='joined')
-    job = db.relation('Job', back_populates='senders', lazy='joined')
+    sender = db.relationship('User', foreign_keys=[sender_id],
+            back_populates='jobs', lazy='joined')
+    receiver = db.relationship('User', foreign_keys=[receiver_id],
+            back_populates='contributors', lazy='joined')
+    job = db.relationship('Job', back_populates='senders', lazy='joined')
     
 
 class User(Base, UserMixin):
@@ -54,8 +59,12 @@ class User(Base, UserMixin):
             backref='company', cascade='all, delete-orphan', 
             passive_deletes = True)
     # test
-    jobs = db.relationship('SendCV', back_populates='sender', 
-                            cascade='all')
+    jobs = db.relationship('SendCV', 
+            foreign_keys=[SendCV.sender_id],
+            back_populates='sender', lazy='dynamic', cascade='all')
+    contributors = db.relationship('SendCV', 
+            foreign_keys=[SendCV.receiver_id],
+            back_populates='receiver', lazy='dynamic', cascade='all')
 
     @property
     def password(self):

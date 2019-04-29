@@ -3,10 +3,10 @@
 '''
 
 from flask import (Blueprint, render_template, flash, redirect, url_for,
-                   request, current_app, abort)
+                   request, current_app, abort, g)
 from flask_login import current_user
 from jobplus.decorators import company_required
-from jobplus.models import User, CompanyInfo, Job, db
+from jobplus.models import User, CompanyInfo, Job, db, SendCV
 from jobplus.forms import CompanyInfoForm, EditCompanyForm, PostJobForm, EditJobForm
 
 
@@ -15,7 +15,9 @@ company_bp = Blueprint('company', __name__, url_prefix='/company')
 @company_bp.route('/')
 @company_required
 def index():
-    return render_template('company/index.html')
+    g.unread_num = len(SendCV.query.filter_by(receiver_id=current_user.id, 
+                 status=10).all())
+    return render_template('company/index.html', unread_num=g.unread_num)
 
 @company_bp.route('/info')
 @company_required
@@ -99,3 +101,62 @@ def del_job(job_id):
         return redirect(url_for('company.index'))
     else:
         abort(404)
+
+@company_bp.route('/unread-cv')
+@company_required
+def unread_cv():
+    page = request.args.get('page', default=1, type=int)
+    pagination = SendCV.query.filter_by(
+            receiver_id=current_user.id, status=10).paginate(
+                page=page,
+                per_page=current_app.config['COMPANY_PER_PAGE'],
+                error_out=False
+        )
+    return render_template('company/unread_cv.html', 
+            pagination=pagination)
+
+@company_bp.route('/accept-cv')
+@company_required
+def accept_cv():
+    page = request.args.get('page', default=1, type=int)
+    pagination = SendCV.query.filter_by(
+            receiver_id=current_user.id, status=30).paginate(
+                page=page,
+                per_page=current_app.config['COMPANY_PER_PAGE'],
+                error_out=False
+        )
+    return render_template('company/accept_cv.html', 
+            pagination=pagination)
+
+@company_bp.route('/refuse-cv')
+@company_required
+def refuse_cv():
+    page = request.args.get('page', default=1, type=int)
+    pagination = SendCV.query.filter_by(
+            receiver_id=current_user.id, status=20).paginate(
+                page=page,
+                per_page=current_app.config['COMPANY_PER_PAGE'],
+                error_out=False
+        )
+    return render_template('company/refuse_cv.html', 
+            pagination=pagination)
+
+@company_bp.route('/refuse/<int:job_id>/<int:user_id>', methods=['GET', 'POST'])
+@company_required
+def refuse(job_id, user_id):
+    send_cv = SendCV.query.filter_by(job_id=job_id, sender_id=user_id).first_or_404()
+    send_cv.status = 20
+    db.session.add(send_cv)
+    db.session.commit()
+    return redirect(url_for('.unread_cv'))
+
+@company_bp.route('/accept/<int:job_id>/<int:user_id>', methods=['GET', 'POST'])
+@company_required
+def accept(job_id, user_id):
+    send_cv = SendCV.query.filter_by(job_id=job_id, sender_id=user_id).first_or_404()
+    send_cv.status = 30
+    db.session.add(send_cv)
+    db.session.commit()
+    return redirect(url_for('.accept_cv'))
+
+

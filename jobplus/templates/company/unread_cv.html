@@ -1,0 +1,45 @@
+{% extends "company/index.html" %}
+{% from "macros.html" import render_pagination %}
+
+{% block title %}Unread-CV{% endblock %}
+
+{% block company %}
+<table class="table">
+  <thead>
+    <tr>
+      <th>职位</th>
+      <th>求职者</th>
+      <th>简历</th>
+      <th>操作</th>
+    </tr>
+    <tbody>
+      {% for cv in pagination.items %}
+      <tr>
+        <td>{{ cv.job.title }}</td>
+        <td>{{ cv.sender.user_info.name }}</td>
+        <td>{{ cv.sender.user_info.resume }}</td>
+        <td>
+          <div class="btn-group">
+            <button class="btn btn-secondary btn-sm dropdown-toggle" 
+                    type="button" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">
+               操作
+            </button>
+
+            <div class="dropdown-menu">
+               <a class="dropdown-item" 
+                  href="{{ url_for('company.refuse', job_id=cv.job.id, 
+                           user_id=cv.sender.id) }}">拒绝</a>
+               <a class="dropdown-item" 
+                  href="{{ url_for('company.accept', job_id=cv.job.id,
+                           user_id=cv.sender.id) }}">同意</a>
+            </div>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </thead>
+</table>
+{{ render_pagination(pagination, 'company.received_cv') }}
+{% endblock %}

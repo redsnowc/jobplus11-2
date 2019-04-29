@@ -41,9 +41,19 @@
       {% endif %}
       <p>学历: {{ job.education }}</p>
       {% if current_user.is_authenticated and current_user.is_user %}
-      <a href="{{ url_for('user.send_cv', job_id=job.id) }}" 
+      {% if not user.user_info %}
+      <a href="{{ url_for('user.edit_userinfo') }}" 
+         class="btn btn-outline-dark" role="button" 
+         aria-pressed="true">补全信息再来投递</a>
+      {% elif not sendcv.query.filter_by(sender_id=current_user.id,
+         job_id=job.id).first() %}
+      <a href="{{ url_for('user.send_cv', job_id=job.id, company_id=job.company.id) }}" 
          class="btn btn-outline-dark" role="button" 
          aria-pressed="true">投递简历</a>
+      {% else %}
+      <button type="button" class="btn btn-outline-dark" 
+       disabled>简历已投递</button>
+      {% endif %}
       {% endif %}
       </center>
   </div>

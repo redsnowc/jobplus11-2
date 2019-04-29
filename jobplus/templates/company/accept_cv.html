@@ -1,0 +1,28 @@
+{% extends "company/index.html" %}
+{% from "macros.html" import render_pagination %}
+
+{% block title %}Accept-CV{% endblock %}
+
+{% block company %}
+<table class="table">
+  <thead>
+    <tr>
+      <th>职位</th>
+      <th>求职者</th>
+      <th>简历</th>
+      <th>电话</th>
+    </tr>
+    <tbody>
+      {% for cv in pagination.items %}
+      <tr>
+        <td>{{ cv.job.title }}</td>
+        <td>{{ cv.sender.user_info.name }}</td>
+        <td>{{ cv.sender.user_info.resume }}</td>
+        <td>{{ cv.sender.user_info.phone_number }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </thead>
+</table>
+{{ render_pagination(pagination, 'company.received_cv') }}
+{% endblock %}

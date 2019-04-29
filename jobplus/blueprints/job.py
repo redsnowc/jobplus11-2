@@ -4,7 +4,8 @@ Job蓝图
 
 from flask import (Blueprint, render_template, flash, redirect, url_for,
                    request, current_app)
-from jobplus.models import Job
+from jobplus.models import Job, SendCV, User
+from flask_login import current_user
 from jobplus.forms import *
 
 
@@ -23,4 +24,8 @@ def jobs():
 @job_bp.route('/<int:job_id>')
 def job_detail(job_id):
     job = Job.query.get_or_404(job_id)
-    return render_template('jobs/detail.html', job=job)
+    sendcv = SendCV()
+    user = User.query.filter_by(id=current_user.id).first()
+    print(user.user_info)
+    return render_template('jobs/detail.html', job=job, 
+                           sendcv=sendcv, user=user)

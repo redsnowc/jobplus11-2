@@ -13,9 +13,15 @@
       <a href="{{ url_for('company.jobs') }}" 
          class="list-group-item list-group-item-action list-group-item-light">
          已发职位</a>
-      <a href="#" 
+      <a href="{{ url_for('company.unread_cv') }}" 
          class="list-group-item list-group-item-action list-group-item-light">
-         查看简历</a>
+         未读简历：{{ unread_num }}</a>
+      <a href="{{ url_for('company.accept_cv') }}" 
+         class="list-group-item list-group-item-action list-group-item-light">
+         已接受简历</a>
+      <a href="{{ url_for('company.refuse_cv') }}" 
+         class="list-group-item list-group-item-action list-group-item-light">
+         已拒绝简历</a>
     </div>
     <br>
     <a href="{{ url_for('company.post_job') }}" type="button" class="btn btn-outline-dark">
