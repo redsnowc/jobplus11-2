@@ -65,7 +65,7 @@ def send_cv(job_id, company_id):
     db.session.add(send_cv)
     db.session.commit()
     flash('简历投递成功！', 'success')
-    return redirect(url_for('job.jobs'))
+    return redirect(url_for('job.job_detail', job_id=job.id))
     
 @user_bp.route('/sent-cv')
 @user_required
