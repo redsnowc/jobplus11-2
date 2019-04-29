@@ -1,0 +1,69 @@
+{% extends "user/index.html" %}
+{% from "macros.html" import render_pagination %}
+
+{% block title %}Sent-CV{% endblock %}
+
+{% block user %}
+<ul class="nav nav-tabs">
+  <li class="nav-item">
+    <a class="nav-link active" href="#">全部已投</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="{{ url_for('user.unread_cv') }}">未读</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="{{ url_for('user.accept_cv') }}">已接受</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="{{ url_for('user.refuse_cv') }}">已拒绝</a>
+  </li>
+</ul>
+<table class="table">
+  <thead>
+    <tr>
+      <th>职位</th>
+      <th>企业名</th>
+      <th>状态</th>
+      <th>操作</th>
+    </tr>
+    <tbody>
+      {% for cv in pagination.items %}
+      <tr>
+        <td>
+          <a href="{{ url_for('job.job_detail', job_id=cv.job.id) }}" 
+             class="btn btn-light" role="button" 
+             aria-pressed="true">{{ cv.job.title }}</a>
+        </td>
+        <td>{{ cv.job.company.username }}</td>
+        {% if cv.status == 10 %}
+        <td>未读</td>
+        {% elif cv.status == 20 %}
+        <td>已拒绝</td>
+        {% else %}
+        <td>已接受</td>
+        {% endif %}
+        <td>
+          <div class="btn-group">
+            {% if cv.status == 10 %}
+            <button class="btn btn-secondary btn-sm dropdown-toggle" 
+                    type="button" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">
+               操作
+            </button>
+            <div class="dropdown-menu">
+               <a class="dropdown-item" 
+                  href="{{ url_for('user.del_cv', job_id=cv.job.id) }}">删除</a>
+            </div>
+            {% else %}
+            <button type="button" class="btn btn-outline-dark" 
+                    disabled>企业已处理无法操作</button>
+            {% endif %}
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </thead>
+</table>
+{{ render_pagination(pagination, 'user.sent_cv') }}
+{% endblock %}

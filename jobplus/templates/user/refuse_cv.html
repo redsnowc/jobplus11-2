@@ -1,0 +1,47 @@
+{% extends "user/index.html" %}
+{% from "macros.html" import render_pagination %}
+
+{% block title %}Refuse-CV{% endblock %}
+
+{% block user %}
+<ul class="nav nav-tabs">
+  <li class="nav-item">
+    <a class="nav-link" href="{{ url_for('user.sent_cv') }}">全部已投</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="{{ url_for('user.unread_cv') }}">未读</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="{{ url_for('user.accept_cv') }}">已接受</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link active" href="#">已拒绝</a>
+  </li>
+</ul>
+<table class="table">
+  <thead>
+    <tr>
+      <th>职位</th>
+      <th>企业名</th>
+      <th>状态</th>
+    </tr>
+    <tbody>
+      {% for cv in pagination.items %}
+      <tr>
+        <td>
+          <a href="{{ url_for('job.job_detail', job_id=cv.job.id) }}" 
+             class="btn btn-light" role="button" 
+             aria-pressed="true">{{ cv.job.title }}</a>
+        </td>
+        <td>{{ cv.job.company.username }}</td>
+        {% if cv.status == 20 %}
+        <td>已拒绝</td>
+        {% endif %}
+      </tr>
+      {% endfor %}
+    </tbody>
+  </thead>
+</table>
+{{ render_pagination(pagination, 'user.unread_cv') }}
+{% endblock %}
+
