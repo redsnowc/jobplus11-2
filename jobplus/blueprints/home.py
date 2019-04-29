@@ -2,7 +2,8 @@
 首页蓝图
 '''
 
-from flask import Blueprint, render_template, flash, redirect, url_for
+from flask import (Blueprint, render_template, flash, redirect, url_for,
+                   abort)
 from flask_login import login_user, logout_user, login_required
 from jobplus.models import User, Job, db
 from jobplus.forms import LoginForm, UserRegisterForm, CompanyRegisterForm
@@ -19,8 +20,16 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
-        login_user(user, form.remember_me.data)
-        return redirect(url_for('.index'))
+        if user.role == 0:
+            abort(403)
+        else:
+            login_user(user, form.remember_me.data)
+            return redirect(url_for('.index'))
+    '''
+    else:
+        flash('您的帐户已被封禁', 'danger')
+        return redirect(url_for('.login'))
+    '''    
     return render_template('login.html', form=form)
 
 @home_bp.route('/logout')

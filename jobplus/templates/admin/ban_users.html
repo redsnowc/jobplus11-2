@@ -8,7 +8,7 @@
   <thead>
     <tr>
       <th>ID</th>
-      <th>企业名</th>
+      <th>用户名</th>
       <th>Email</th>
       <th>操作</th>
     </tr>
@@ -28,21 +28,12 @@
 
             <div class="dropdown-menu">
               <a class="dropdown-item" 
-                 href="{{ url_for('firm.detail', user_id=user.id) }}">
-                       查看企业信息</a>
-              <a class="dropdown-item" 
-                 href="{{ url_for('firm.jobs', user_id=user.id) }}">
-                       查看再招职位</a>
-              <a class="dropdown-item" 
-                 href="{{ url_for('admin.edit_user', user_id=user.id) }}">
-                       编辑账户信息</a>
-              <a class="dropdown-item" 
-                 href="{{ url_for('admin.edit_companyinfo', 
-                       user_id=user.id) }}">
-                       编辑企业信息</a>
-              <a class="dropdown-item" 
-                 href="{{ url_for('admin.ban', user_id=user.id) }}">
-                       封禁该企业</a>
+                 href="{{ url_for('admin.lift_ban', user_id=user.id) }}">
+                       {% if 'bc' in user.username %}
+                       解封该企业</a>
+                       {% else %}
+                       解封该用户</>
+                       {% endif %}
               <a class="dropdown-item" 
                  href="{{ url_for('admin.del_user', user_id=user.id) }}">
                        删除</a>
@@ -54,6 +45,6 @@
     </tbody>
   </thead>
 </table>
-{{ render_pagination(pagination, 'admin.companies') }}
+{{ render_pagination(pagination, 'admin.ban_users') }}
 {% endblock %}
 

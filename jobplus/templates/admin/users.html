@@ -34,6 +34,9 @@
                   href="{{ url_for('admin.edit_userinfo', user_id=user.id) }}">
                         编辑个人信息</a>
                <a class="dropdown-item" 
+                  href="{{ url_for('admin.ban', user_id=user.id) }}">
+                        封禁该用户</a>
+               <a class="dropdown-item" 
                   href="{{ url_for('admin.del_user', user_id=user.id) }}">
                         删除</a>
             </div>

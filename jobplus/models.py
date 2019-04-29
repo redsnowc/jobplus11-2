@@ -72,7 +72,6 @@ class UserInfo(Base):
     resume = db.Column(db.String(256))
     user_id = db.Column(
             db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'))
-    #user = db.relationship('User', uselist=False)
 
 
 class CompanyInfo(Base):
@@ -85,7 +84,6 @@ class CompanyInfo(Base):
     website = db.Column(db.String(256))
     company_id = db.Column(
             db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'))
-    #company = db.relationship('User', uselist=False)
             
 
 class Job(Base):
@@ -100,5 +98,4 @@ class Job(Base):
     intro = db.Column(db.Text)
     company_id = db.Column(
             db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'))
-    #company = db.relationship('User', uselist=False)
 

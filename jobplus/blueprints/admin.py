@@ -104,8 +104,10 @@ def del_user(user_id):
     flash('用户已删除', 'success')
     if role == 10:
         return redirect(url_for('.users'))
-    else:
+    elif role == 20:
         return redirect(url_for('.companies'))
+    else:
+        return redirect(url_for('.users_ban'))
 
 @admin_bp.route('/companies')
 @admin_required
@@ -138,4 +140,43 @@ def edit_companyinfo(user_id):
             return redirect(url_for('.companies'))
     return render_template('admin/edit_companyinfo.html',
                            form=form, user=user)
+
+@admin_bp.route('/ban/<int:user_id>', methods=['GET', 'POST'])
+@admin_required
+def ban(user_id):
+    user = User.query.get_or_404(user_id)
+    role = user.role
+    if role == 20:
+        user.username += 'bc'
+    else:
+        user.username += 'bu' 
+    user.role = 0
+    db.session.add(user)
+    db.session.commit()
+    return redirect(url_for('.users_ban'))
+
+@admin_bp.route('/lift-ban/<int:user_id>', methods=['GET', 'POST'])
+@admin_required
+def lift_ban(user_id):
+    user = User.query.get_or_404(user_id)
+    if 'bc' in user.username:
+        user.role = 20
+        user.username = user.username.replace('bc', '')
+    else:
+        user.role = 10
+        user.username = user.username.replace('bu', '')
+    db.session.add(user)
+    db.session.commit()
+    return redirect(url_for('.users_ban'))
+
+@admin_bp.route('/users-ban')
+@admin_required
+def users_ban():
+    page = request.args.get('page', default=1, type=int)
+    pagination = User.query.filter_by(role=0).paginate(
+            page=page,
+            per_page=current_app.config['COMPANY_PER_PAGE'],
+            error_out=False
+        )
+    return render_template('admin/ban_users.html', pagination=pagination)
 
