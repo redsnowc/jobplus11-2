@@ -14,8 +14,13 @@ user_bp = Blueprint('user', __name__, url_prefix='/user')
 @user_bp.route('/')
 @user_required
 def index():
+    return render_template('user/index.html')
+
+@user_bp.route('/info')
+@user_required
+def userinfo():
     user = User.query.filter_by(username=current_user.username).first()
-    return render_template('user/index.html', user=user)
+    return render_template('user/user_info.html', user=user)
 
 @user_bp.route('/edit-userinfo', methods=['GET', 'POST'])
 @user_required
