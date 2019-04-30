@@ -54,6 +54,10 @@
       <button type="button" class="btn btn-outline-dark" 
        disabled>简历已投递</button>
       {% endif %}
+      {% elif not current_user.is_authenticated %}
+      <a href="{{ url_for('home.login') }}" 
+         class="btn btn-outline-dark" role="button" 
+         aria-pressed="true">登录后才能投递</a>
       {% endif %}
       </center>
   </div>

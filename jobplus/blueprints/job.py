@@ -25,7 +25,9 @@ def jobs():
 def job_detail(job_id):
     job = Job.query.get_or_404(job_id)
     sendcv = SendCV()
-    user = User.query.filter_by(id=current_user.id).first()
-    print(user.user_info)
-    return render_template('jobs/detail.html', job=job, 
-                           sendcv=sendcv, user=user)
+    if current_user.is_authenticated:
+        user = User.query.filter_by(id=current_user.id).first()
+        return render_template('jobs/detail.html', job=job, 
+                                sendcv=sendcv, user=user)
+    else:
+        return render_template('jobs/detail.html', job=job)
