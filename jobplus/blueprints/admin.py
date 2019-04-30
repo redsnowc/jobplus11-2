@@ -66,7 +66,7 @@ def edit_job(job_id):
     if form.validate_on_submit():
         form.update_job(job)
         flash('职位更新成功', 'success')
-        return redirect(url_for('admin.jobs'))
+        return redirect(url_for('.online_jobs'))
     return render_template('admin/edit_job.html', form=form, job=job)
 
 @admin_bp.route('/del-job/<int:job_id>', methods=['GET', 'POST'])
@@ -76,7 +76,7 @@ def del_job(job_id):
     db.session.delete(job)
     db.session.commit()
     flash('职位已删除', 'success')
-    return redirect(url_for('admin.jobs'))
+    return redirect(url_for('.online_jobs'))
 
 @admin_bp.route('/users')
 @admin_required
