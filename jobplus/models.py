@@ -3,6 +3,7 @@ User 用户数据表
 UserInfo 用户信息表
 CompanyInfo 公司简介数据表
 Job 职位数据表
+SendCV 简历投递表
 '''
 
 from datetime import datetime
