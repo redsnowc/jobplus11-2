@@ -25,7 +25,7 @@
   <a class="nav-link" href="{{ url_for('firm.detail', user_id=firm.id) }}">企业详情</a>
   </li>
   <li class="nav-item" >
-    <a class="nav-link active" href="#">在招职位: {{ firm.publish_job|length }}</a>
+    <a class="nav-link active" href="#">在招职位: {{ jobs|length }}</a>
   </li>
 </ul>
 <div class="row">

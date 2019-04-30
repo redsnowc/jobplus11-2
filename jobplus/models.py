@@ -113,6 +113,9 @@ class CompanyInfo(Base):
             
 
 class Job(Base):
+    ONLINE = 10
+    OFFLINE = 20
+
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(128), nullable=False)
     salary_lower = db.Column(db.Integer, nullable=False)
@@ -122,7 +125,9 @@ class Job(Base):
     education = db.Column(db.String(16), default='学历不限')
     tags = db.Column(db.String(128))
     intro = db.Column(db.Text)
+    status = db.Column(db.SmallInteger, default=ONLINE)
     company_id = db.Column(
             db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'))
     # test
     senders = db.relationship('SendCV', back_populates='job', cascade='all')
+

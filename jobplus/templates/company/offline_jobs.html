@@ -1,0 +1,59 @@
+{% extends "company/index.html" %}
+{% from "macros.html" import render_pagination %}
+
+{% block title %}Company-OfflineJobs{% endblock %}
+
+{% block company %}
+<ul class="nav nav-tabs">
+  <li class="nav-item">
+    <a class="nav-link" href="{{ url_for('company.online_jobs') }}">在线职位</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link active" href="#">下线职位</a>
+  </li>
+</ul>
+<table class="table">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>职位</th>
+      <th>薪资</th>
+      <th>经验</th>
+      <th>学历</th>
+      <th>标签</th>
+      <th>操作</th>
+    </tr>
+    <tbody>
+      {% for job in pagination.items %}
+      <tr>
+        <td>{{ job.id }}</td>
+        <td>{{ job.title }}</td>
+        <td>{{ job.salary_lower }}k-{{ job.salary_upper }}k</td>
+        <td>{{ job.experience_lower}}-{{ job.experience_upper }}</td>
+        <td>{{ job.education }}</td>
+        <td>{{ job.tags }}</td>
+        <td>
+          <div class="btn-group">
+            <button class="btn btn-secondary btn-sm dropdown-toggle" 
+                    type="button" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">
+               操作
+            </button>
+
+            <div class="dropdown-menu">
+               <a class="dropdown-item" 
+                  href="{{ url_for('company.edit_job', job_id=job.id) }}">编辑</a>
+               <a class="dropdown-item" 
+                  href="{{ url_for('company.online', job_id=job.id) }}">上线</a>
+               <a class="dropdown-item" 
+                  href="{{ url_for('company.del_job', job_id=job.id) }}">删除</a>
+            </div>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </thead>
+</table>
+{{ render_pagination(pagination, 'company.offline_jobs') }}
+{% endblock %}

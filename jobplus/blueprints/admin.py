@@ -18,16 +18,45 @@ admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
 def index():
     return render_template('admin/index.html')
 
-@admin_bp.route('/jobs')
+@admin_bp.route('/online-jobs')
 @admin_required
-def jobs():
+def online_jobs():
     page = request.args.get('page', default=1, type=int)
-    pagination = Job.query.paginate(
+    pagination = Job.query.filter_by(status=Job.ONLINE).paginate(
             page=page,
             per_page=current_app.config['COMPANY_PER_PAGE'],
             error_out=False
         )
-    return render_template('admin/jobs.html', pagination=pagination)
+    return render_template('admin/online_jobs.html', pagination=pagination)
+
+@admin_bp.route('/offline-jobs')
+@admin_required
+def offline_jobs():
+    page = request.args.get('page', default=1, type=int)
+    pagination = Job.query.filter_by(status=Job.OFFLINE).paginate(
+            page=page,
+            per_page=current_app.config['COMPANY_PER_PAGE'],
+            error_out=False
+        )
+    return render_template('admin/offline_jobs.html', pagination=pagination)
+
+@admin_bp.route('/online/<int:job_id>', methods=['GET', 'POST'])
+@admin_required
+def online(job_id):
+    job = Job.query.get_or_404(job_id)
+    job.status = Job.ONLINE
+    db.session.add(job)
+    db.session.commit()
+    return redirect(url_for('.offline_jobs'))
+
+@admin_bp.route('/offline/<int:job_id>', methods=['GET', 'POST'])
+@admin_required
+def offline(job_id):
+    job = Job.query.get_or_404(job_id)
+    job.status = Job.OFFLINE
+    db.session.add(job)
+    db.session.commit()
+    return redirect(url_for('.online_jobs'))
 
 @admin_bp.route('/edit-job/<int:job_id>', methods=['GET', 'POST'])
 @admin_required

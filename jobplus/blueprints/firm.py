@@ -5,7 +5,6 @@ Firm蓝图
 from flask import (Blueprint, render_template, flash, redirect, url_for,
                    request, current_app, abort)
 from jobplus.models import Job, User
-from jobplus.forms import *
 
 
 firm_bp = Blueprint('firm', __name__, url_prefix='/firms')
@@ -26,7 +25,9 @@ def detail(user_id):
     if firm.role != 20:
         abort(404)
     else:
-        return render_template('firms/detail.html', firm=firm)
+        jobs_num = len(Job.query.filter_by(company_id=firm.id, 
+            status=Job.ONLINE).all())
+        return render_template('firms/detail.html', firm=firm, jobs_num=jobs_num)
 
 @firm_bp.route('/<int:user_id>/jobs')
 def jobs(user_id):
@@ -34,5 +35,5 @@ def jobs(user_id):
     if firm.role != 20:
         abort(404)
     else:
-        jobs = firm.publish_job
+        jobs = Job.query.filter_by(company_id=firm.id, status=Job.ONLINE).all()
         return render_template('firms/jobs.html', jobs=jobs, firm=firm)

@@ -61,20 +61,50 @@ def post_job():
     if form.validate_on_submit():
         form.create_job()
         flash('职位发布成功！', 'success')
-        return redirect(url_for('.index'))
+        return redirect(url_for('.online_jobs'))
     return render_template('company/post_job.html', form=form)
 
-@company_bp.route('/jobs')
+@company_bp.route('/online-jobs')
 @company_required
-def jobs():
+def online_jobs():
     user = User.query.filter_by(username=current_user.username).first()
     page = request.args.get('page', default=1, type=int)
-    pagination = Job.query.with_parent(user).paginate(
+    pagination = Job.query.with_parent(user).filter_by(status=Job.ONLINE).paginate(
                 page=page,
                 per_page=current_app.config['COMPANY_PER_PAGE'],
                 error_out=False
         )
-    return render_template('company/jobs.html', pagination=pagination)
+    return render_template('company/online_jobs.html', pagination=pagination)
+
+@company_bp.route('/offline-jobs')
+@company_required
+def offline_jobs():
+    user = User.query.filter_by(username=current_user.username).first()
+    page = request.args.get('page', default=1, type=int)
+    pagination = Job.query.with_parent(user).filter_by(status=Job.OFFLINE).paginate(
+                page=page,
+                per_page=current_app.config['COMPANY_PER_PAGE'],
+                error_out=False
+        )
+    return render_template('company/offline_jobs.html', pagination=pagination)
+
+@company_bp.route('/online/<int:job_id>', methods=['GET', 'POST'])
+@company_required
+def online(job_id):
+    job = Job.query.get_or_404(job_id)
+    job.status = Job.ONLINE
+    db.session.add(job)
+    db.session.commit()
+    return redirect(url_for('.offline_jobs'))
+
+@company_bp.route('/offline/<int:job_id>', methods=['GET', 'POST'])
+@company_required
+def offline(job_id):
+    job = Job.query.get_or_404(job_id)
+    job.status = Job.OFFLINE
+    db.session.add(job)
+    db.session.commit()
+    return redirect(url_for('.online_jobs'))
 
 @company_bp.route('/edit-job/<int:job_id>', methods=['GET', 'POST'])
 @company_required
@@ -85,7 +115,7 @@ def edit_job(job_id):
         if form.validate_on_submit():
             form.update_job(job)
             flash('职位更新成功', 'success')
-            return redirect(url_for('company.index'))
+            return redirect(url_for('.index'))
     else:
         abort(404)
     return render_template('company/edit_job.html', form=form, job=job)
@@ -98,7 +128,7 @@ def del_job(job_id):
         db.session.delete(job)
         db.session.commit()
         flash('职位已删除', 'success')
-        return redirect(url_for('company.index'))
+        return redirect(url_for('.index'))
     else:
         abort(404)
 
@@ -157,6 +187,6 @@ def accept(job_id, user_id):
     send_cv.status = 30
     db.session.add(send_cv)
     db.session.commit()
+    flash('已接受该简历，快去联系求职者面试吧！', 'success')
     return redirect(url_for('.accept_cv'))
-
 

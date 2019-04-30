@@ -14,7 +14,7 @@ job_bp = Blueprint('job', __name__, url_prefix='/jobs')
 @job_bp.route('/')
 def jobs():
     page = request.args.get('page', default=1, type=int)
-    pagination = Job.query.paginate(
+    pagination = Job.query.filter_by(status=Job.ONLINE).paginate(
             page=page,
             per_page=current_app.config['HOME_PER_PAGE'],
             error_out=False
@@ -23,7 +23,8 @@ def jobs():
 
 @job_bp.route('/<int:job_id>')
 def job_detail(job_id):
-    job = Job.query.get_or_404(job_id)
+    #job = Job.query.get_or_404(job_id)
+    job = Job.query.filter_by(id=job_id, status=Job.ONLINE).first_or_404()
     sendcv = SendCV()
     if current_user.is_authenticated:
         user = User.query.filter_by(id=current_user.id).first()
@@ -31,3 +32,4 @@ def job_detail(job_id):
                                 sendcv=sendcv, user=user)
     else:
         return render_template('jobs/detail.html', job=job)
+
