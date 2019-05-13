@@ -8,6 +8,7 @@ from flask_login import current_user
 from jobplus.decorators import company_required
 from jobplus.models import User, CompanyInfo, Job, db, SendCV
 from jobplus.forms import CompanyInfoForm, EditCompanyForm, PostJobForm, EditJobForm
+from jobplus.libs.helper import count_unread
 
 
 company_bp = Blueprint('company', __name__, url_prefix='/company')
@@ -15,15 +16,16 @@ company_bp = Blueprint('company', __name__, url_prefix='/company')
 @company_bp.route('/')
 @company_required
 def index():
-    g.unread_num = len(SendCV.query.filter_by(receiver_id=current_user.id, 
-                 status=10).all())
-    return render_template('company/index.html', unread_num=g.unread_num)
+    unread_num = count_unread() 
+    return render_template('company/index.html', unread_num=unread_num)
 
 @company_bp.route('/info')
 @company_required
 def company_info():
     user = User.query.filter_by(username=current_user.username).first()
-    return render_template('company/company_info.html', user=user)
+    unread_num = count_unread() 
+    return render_template('company/company_info.html', user=user, 
+                           unread_num=unread_num)
 
 @company_bp.route('/edit-companyinfo', methods=['GET', 'POST'])
 @company_required
@@ -58,11 +60,12 @@ def edit_company():
 @company_required
 def post_job():
     form = PostJobForm()
+    unread_num = count_unread() 
     if form.validate_on_submit():
         form.create_job()
         flash('职位发布成功！', 'success')
         return redirect(url_for('.online_jobs'))
-    return render_template('company/post_job.html', form=form)
+    return render_template('company/post_job.html', form=form, unread_num=unread_num)
 
 @company_bp.route('/online-jobs')
 @company_required
@@ -74,7 +77,9 @@ def online_jobs():
                 per_page=current_app.config['COMPANY_PER_PAGE'],
                 error_out=False
         )
-    return render_template('company/online_jobs.html', pagination=pagination)
+    unread_num = count_unread() 
+    return render_template('company/online_jobs.html', pagination=pagination, 
+                           unread_num=unread_num)
 
 @company_bp.route('/offline-jobs')
 @company_required
@@ -86,7 +91,9 @@ def offline_jobs():
                 per_page=current_app.config['COMPANY_PER_PAGE'],
                 error_out=False
         )
-    return render_template('company/offline_jobs.html', pagination=pagination)
+    unread_num = count_unread() 
+    return render_template('company/offline_jobs.html', pagination=pagination, 
+                           unread_num=unread_num)
 
 @company_bp.route('/online/<int:job_id>', methods=['GET', 'POST'])
 @company_required
@@ -118,7 +125,9 @@ def edit_job(job_id):
             return redirect(url_for('.index'))
     else:
         abort(404)
-    return render_template('company/edit_job.html', form=form, job=job)
+    unread_num = count_unread() 
+    return render_template('company/edit_job.html', form=form, job=job, 
+                            unread_num=unread_num)
 
 @company_bp.route('/del-job/<int:job_id>', methods=['GET', 'POST'])
 @company_required
@@ -142,8 +151,9 @@ def unread_cv():
                 per_page=current_app.config['COMPANY_PER_PAGE'],
                 error_out=False
         )
-    return render_template('company/unread_cv.html', 
-            pagination=pagination)
+    unread_num = count_unread() 
+    return render_template('company/unread_cv.html', pagination=pagination, 
+                            unread_num=unread_num)
 
 @company_bp.route('/accept-cv')
 @company_required
@@ -155,8 +165,9 @@ def accept_cv():
                 per_page=current_app.config['COMPANY_PER_PAGE'],
                 error_out=False
         )
-    return render_template('company/accept_cv.html', 
-            pagination=pagination)
+    unread_num = count_unread() 
+    return render_template('company/accept_cv.html', pagination=pagination,  
+                            unread_num=unread_num)
 
 @company_bp.route('/refuse-cv')
 @company_required
@@ -168,8 +179,9 @@ def refuse_cv():
                 per_page=current_app.config['COMPANY_PER_PAGE'],
                 error_out=False
         )
-    return render_template('company/refuse_cv.html', 
-            pagination=pagination)
+    unread_num = count_unread() 
+    return render_template('company/refuse_cv.html', pagination=pagination, 
+                            unread_num=unread_num)
 
 @company_bp.route('/refuse/<int:job_id>/<int:user_id>', methods=['GET', 'POST'])
 @company_required
